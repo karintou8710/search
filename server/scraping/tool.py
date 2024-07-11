@@ -10,8 +10,8 @@ from scraping import table
 
 # 旧GPAは未対応
 
-HOME_URL = "https://educate.academic.hokudai.ac.jp/seiseki/GradeDistSerch.aspx"
-RESULT_URL = "https://educate.academic.hokudai.ac.jp/seiseki/GradeDistResult11.aspx"
+HOME_URL = 'https://educate.academic.hokudai.ac.jp/seiseki/GradeDistSerch.aspx'
+RESULT_URL = 'https://educate.academic.hokudai.ac.jp/seiseki/GradeDistResult11.aspx'
 
 
 class GradeScraping:
@@ -55,27 +55,46 @@ class GradeScraping:
         if self.driver.current_url != RESULT_URL:
             raise Exception('結果ページに移動してください。')
 
-        trs = self.driver.find_elements_by_xpath(
-            '//*[@id="gvResult"]/tbody/tr')
-        trs = trs[2:]  # トップの余分な情報を捨てる
-        trs = [tr for i, tr in enumerate(trs) if i % 2 == 0]  # 2個周期で空情報
+        trs = self.driver.find_elements_by_xpath('//*[@id="gvResult"]/tbody/tr')
+        trs = trs[2:]  # ヘッダーの余分な情報を捨てる
+
+        def isValidRow(tr):
+            tds = tr.find_elements_by_tag_name('td')
+            # 空行ではない新GPAの行
+            if (len(tds) != 18):
+                return False
+
+             # 統計データは取得しない
+            if tds[2].text in ['合計', '統計', '総計']:
+                return False
+
+            return True
+        trs = list(filter(isValidRow, trs))
 
         grades = ['ap', 'a', 'am', 'bp', 'b', 'bm', 'cp', 'c', 'd', 'dm', 'f']
+        totalSize = int(self.driver.find_element_by_id('lblResultCnt').text)
+
+        # 行数が指定のものと同じかチェック2
+        try:
+            assert totalSize == len(trs)
+        except AssertionError:
+            raise ValueError(
+                f'実際の成績数とカウントされた成績数が異なります: expectedSize={totalSize}, actualSize={len(trs)}'
+            )
+
         for tr in tqdm(trs):
             item = dict()
             tds = tr.find_elements_by_tag_name('td')
 
             item['subject'] = tds[1].text
             item['lecture'] = tds[2].text
-            # 統計データは取得しない
-            if item['lecture'] in ['合計', '統計', '総計']:
-                continue
             item['group'] = tds[3].text
             item['teacher'] = tds[4].text.replace('　', '')
             item['year'] = table.termID2year[self.termID][0]
-            item['semester'] = table.termID2year[self.termID][1] + "学期"
+            item['semester'] = table.termID2year[self.termID][1] + '学期'
             item['faculty'] = table.facultyID2name[self.facultyID]
             numOfStudents = tds[5].text
+            # NOTE: 正常なデータだが成績がないデータもある(２重登録？)
             if numOfStudents == ' ':
                 continue
             item['numOfStudents'] = int(numOfStudents)
@@ -84,9 +103,7 @@ class GradeScraping:
             try:
                 for idx in range(len(grades)):
                     percent = float(tds[6 + idx].text)
-
-                    item[grades[idx]] = round(
-                        percent * item['numOfStudents'] / 100)
+                    item[grades[idx]] = round(percent * item['numOfStudents'] / 100)
                     sumNum += item[grades[idx]]
             except ValueError:  # 旧GPAはスキップ
                 continue
@@ -98,7 +115,6 @@ class GradeScraping:
                 self.errors.append(tr)
                 continue
             item['gpa'] = float(tds[6 + len(grades)].text)
-
             yield item
 
     def close(self):
