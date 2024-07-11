@@ -64,7 +64,7 @@ class GradeScraping:
             if (len(tds) != 18):
                 return False
 
-             # 統計データは取得しない
+            # 統計データは取得しない
             if tds[2].text in ['合計', '統計', '総計']:
                 return False
 
