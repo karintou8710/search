@@ -7,6 +7,7 @@
                 </template>
                 <template v-else>
                     <h1>An error occurred</h1>
+                    <p>status code: {{ error.statusCode }}</p>
                     <p>{{ error.message }}</p>
                 </template>
             </v-col>

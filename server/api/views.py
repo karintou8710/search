@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .decorators import InitBookMarkSessionDeco
 from .filters import OrderingFilter, SearchFilter
 from .forms import BookMarkForm
 from .models import GradeInfo
@@ -41,13 +42,15 @@ class BookMarkList(APIView):
     ]
     ordering = ['-year', '-semester']
 
+    @InitBookMarkSessionDeco
     def get(self, request, format=None):
-        bookMarkIDs = request.session.get('bookMarkIDs', [])
+        bookMarkIDs = request.session['bookMarkIDs']
         gradeInfoList = GradeInfo.objects.filter(pk__in=bookMarkIDs)
         gradeInfoList = OrderingFilter().filter_queryset(request, gradeInfoList, self)
         serializer = GradeInfoSerializer(gradeInfoList, many=True)
         return Response(serializer.data)
 
+    @InitBookMarkSessionDeco
     def post(self, request, format=None):
 
         form = BookMarkForm(request.data)
@@ -56,11 +59,7 @@ class BookMarkList(APIView):
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
         bookMarkID = form.cleaned_data['bookMarkID']
-        if not request.session.get('bookMarkIDs'):
-            bookMarkIDs = []
-            request.session['bookMarkIDs'] = bookMarkIDs
-        else:
-            bookMarkIDs = request.session['bookMarkIDs']
+        bookMarkIDs = request.session['bookMarkIDs']
 
         if bookMarkID in bookMarkIDs:
             error = {
@@ -77,6 +76,7 @@ class BookMarkList(APIView):
         return Response(context, status=status.HTTP_201_CREATED)
 
     # bookmark dataを全て削除
+    @InitBookMarkSessionDeco
     def delete(self, request, format=None):
         request.session['bookMarkIDs'] = []
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -84,11 +84,8 @@ class BookMarkList(APIView):
 
 class BookMarkDetail(APIView):
 
+    @InitBookMarkSessionDeco
     def delete(self, request, pk, format=None):
-        if not request.session.get('bookMarkIDs'):
-            bookMarkIDs = []
-            request.session['bookMarkIDs'] = bookMarkIDs
-
         try:
             request.session['bookMarkIDs'].remove(pk)
             # sessionの変更を伝える

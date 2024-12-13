@@ -3,6 +3,8 @@ from django.utils import timezone
 
 
 class GradeInfo(models.Model):
+    """成績データ
+    """
 
     subject = models.CharField(max_length=100)
     lecture = models.CharField(max_length=100)

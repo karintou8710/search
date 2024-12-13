@@ -113,9 +113,28 @@ export default {
         async fetchBookmarkAPIData () {
             this.isVisible = false;
 
-            const res = await axios.get(this.joinQuery(bookmarkURL), {
-                withCredentials: true
-            });
+            let res;
+            try {
+                res = await axios.get(this.joinQuery(bookmarkURL), {
+                    withCredentials: true
+                });
+            } catch (error) {
+                if (error.response) {
+                    this.$nuxt.error({
+                        status: error.response.status,
+                        message: 'サーバーでエラーが発生しました'
+                    });
+                } else if (error.request) {
+                    this.$nuxt.error({
+                        message: 'サーバーからレスポンスがありません'
+                    });
+                } else {
+                    this.$nuxt.error({
+                        message: error.message
+                    });
+                }
+                return;
+            }
 
             this.items.splice(0, this.items.length);
             this.items.push(...res.data);

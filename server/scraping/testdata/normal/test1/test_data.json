@@ -1,0 +1,77 @@
+[
+    {
+    "model": "api.gradeinfo",
+    "fields": {
+        "subject": "test",
+        "lecture": "Japanese test",
+        "group": "test",
+        "teacher": "test",
+        "year": "2019",
+        "semester": "2学期",
+        "faculty": "総合教育部",
+        "numOfStudents": 6,
+        "ap": 1 ,
+        "a": 4,
+        "am": 0,
+        "bp": 0,
+        "b": 1,
+        "bm": 0,
+        "cp": 0,
+        "c": 0,
+        "d": 0,
+        "dm": 0,
+        "f": 0,
+        "gpa": 3.88
+    }
+},
+    {
+    "model": "api.gradeinfo",
+    "fields": {
+        "subject": "Introduction test",
+        "lecture": " ",
+        "group": "現代日本test",
+        "teacher": "test",
+        "year": "2019",
+        "semester": "2学期",
+        "faculty": "総合教育部",
+        "numOfStudents": 6,
+        "ap": 0,
+        "a": 2,
+        "am": 2,
+        "bp": 1,
+        "b": 1,
+        "bm": 0,
+        "cp": 0,
+        "c": 0,
+        "d": 0,
+        "dm": 0,
+        "f": 0,
+        "gpa": 3.62
+    }
+},
+    {
+    "model": "api.gradeinfo",
+    "fields": {
+        "subject": "Multiculturality test",
+        "lecture": " ",
+        "group": "現代test",
+        "teacher": "test",
+        "year": "2019",
+        "semester": "2学期",
+        "faculty": "総合教育部",
+        "numOfStudents": 15,
+        "ap": 1,
+        "a": 4,
+        "am": 4,
+        "bp": 4,
+        "b": 2,
+        "bm": 0,
+        "cp": 0,
+        "c": 0,
+        "d": 0,
+        "dm": 0,
+        "f": 0,
+        "gpa": 3.62
+    }
+}
+]

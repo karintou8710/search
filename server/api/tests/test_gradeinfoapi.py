@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.models import GradeInfo
-from api.paginations import get_num_page
+from api.paginations import SizePagination
 
 
 class GradeInfoAPITest(APITestCase):
@@ -112,5 +112,5 @@ class GradeInfoAPITest(APITestCase):
             raise Exception("ページサイズが変更されました。テストコードを見直す必要があります。")
         page_size = settings.REST_FRAMEWORK['PAGE_SIZE']
         ans = [10, 11, 10]
-        res = [get_num_page(inp, page_size) for inp in inputs]
+        res = [SizePagination.get_num_page(inp, page_size) for inp in inputs]
         self.assertEqual(res, ans)

@@ -11,25 +11,43 @@ iNAZO とは北大が公開している成績データを見やすく纏めた W
 
 ## Local Usage
 
-./clientでの作業
-```
+./client での作業
+
+```bash
 yarn install
 yarn dev
 ```
 
-./serverでの作業
-```
+./server での作業
+
+```bash
 pipenv sync
 cp .env.example .env
 ```
-.envのDATABASE_URLを絶対パスで適切に設定する
+
+.env の DATABASE_URL を絶対パスで適切に設定する
 example: sqlite:////tmp/my-tmp-sqlite.db
-```
+
+```bash
 pipenv run migrate
 pipenv run dev
 ```
 
-初期データは別途スクレイピングをしてDBに保存してください。
+初期データは別途スクレイピングをして DB に保存してください。
+
+## スクレイピング方法
+
+```bash
+pipenv run gradescraping <year-semester> <faculty>
+# example
+pipenv run gradescraping 2023 1
+```
+
+成績を DB にロードする
+
+```bash
+pipenv run loaddata
+```
 
 ## Source
 
@@ -44,11 +62,9 @@ http://educate.academic.hokudai.ac.jp/seiseki/GradeDistSerch.aspx
 
 ## Relevant repository
 
-OGP IMAGEを動的に生成するツール
+OGP IMAGE を動的に生成するツール
 [iNAZO-opg-image](https://github.com/karintou8710/iNAZO-ogp-image)
 
 ## License
 
 このプロジェクトは [MIT license](https://en.wikipedia.org/wiki/MIT_License) です。
-
-

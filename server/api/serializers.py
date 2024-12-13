@@ -4,6 +4,8 @@ from .models import GradeInfo
 
 
 class GradeInfoSerializer(serializers.ModelSerializer):
+    """成績データのシリアライザー。フォームのような役割をする。
+    """
 
     class Meta:
         model = GradeInfo

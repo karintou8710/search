@@ -37,7 +37,7 @@ class Command(BaseCommand):
         dirPath = f'scraping/data/{termID}'
 
         if not os.path.exists(dirPath):
-            os.mkdir(dirPath)
+            os.makedirs(dirPath)
 
         filename = f'scraping/data/{termID}/{facultyID}.json'
 

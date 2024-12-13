@@ -52,28 +52,77 @@ export default {
 
             if (item.isBookMark) {
                 // ブックマーク解除
-                const res = await axios.delete(`${bookmarkURL}${bookMarkID}/`, {
-                    withCredentials: true
-                });
+                let res;
+                try {
+                    res = await axios.delete(`${bookmarkURL}${bookMarkID}/`, {
+                        withCredentials: true
+                    });
+                } catch (error) {
+                    if (error.response) {
+                        this.$nuxt.error({
+                            status: error.response.status,
+                            message: 'サーバーでエラーが発生しました'
+                        });
+                    } else if (error.request) {
+                        this.$nuxt.error({
+                            message: 'サーバーからレスポンスがありません'
+                        });
+                    } else {
+                        this.$nuxt.error({
+                            message: error.message
+                        });
+                    }
+                    return;
+                }
+
                 if (res.status === HTTP_204_NO_CONTENT) {
                     this.bookMarkIDs = this.bookMarkIDs.filter(id => id !== bookMarkID);
                     item.isBookMark = !item.isBookMark;
                     this.$set(this.items, index, item);
+                } else {
+                    this.$nuxt.error({
+                        status: res.status,
+                        message: '予期しないステータスコードです'
+                    });
                 }
             } else {
                 // 登録
-                const res = await axios.post(
-                    bookmarkURL,
-                    { bookMarkID },
-                    {
-                        withCredentials: true
+                let res;
+                try {
+                    res = await axios.post(
+                        bookmarkURL,
+                        { bookMarkID },
+                        {
+                            withCredentials: true
+                        }
+                    );
+                } catch (error) {
+                    if (error.response) {
+                        this.$nuxt.error({
+                            status: error.response.status,
+                            message: 'サーバーでエラーが発生しました'
+                        });
+                    } else if (error.request) {
+                        this.$nuxt.error({
+                            message: 'サーバーからレスポンスがありません'
+                        });
+                    } else {
+                        this.$nuxt.error({
+                            message: error.message
+                        });
                     }
-                );
+                    return;
+                }
 
                 if (res.status === HTTP_201_CREATED) {
                     this.bookMarkIDs = res.data.bookMarkIDs;
                     item.isBookMark = !item.isBookMark;
                     this.$set(this.items, index, item);
+                } else {
+                    this.$nuxt.error({
+                        status: res.status,
+                        message: '予期しないステータスコードです'
+                    });
                 }
             }
         },

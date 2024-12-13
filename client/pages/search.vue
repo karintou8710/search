@@ -234,9 +234,28 @@ export default {
         async fetchGradeAPIData () {
             this.isVisible = false;
 
-            const res = await axios.get(this.joinQuery(gradeURL), {
-                withCredentials: true
-            });
+            let res;
+            try {
+                res = await axios.get(this.joinQuery(gradeURL), {
+                    withCredentials: true
+                });
+            } catch (error) {
+                if (error.response) {
+                    this.$nuxt.error({
+                        status: error.response.status,
+                        message: 'サーバーでエラーが発生しました'
+                    });
+                } else if (error.request) {
+                    this.$nuxt.error({
+                        message: 'サーバーからレスポンスがありません'
+                    });
+                } else {
+                    this.$nuxt.error({
+                        message: error.message
+                    });
+                }
+                return;
+            }
 
             // 取得したデータがブックマークされているか確認
             res.data.results.forEach((item) => {
@@ -261,7 +280,26 @@ export default {
                 withCredentials: true
             };
             if (headers) { options.headers = { cookie: headers.cookie }; }
-            const res = await axios.get(bookmarkURL, options);
+            let res;
+            try {
+                res = await axios.get(bookmarkURL, options);
+            } catch (error) {
+                if (error.response) {
+                    this.$nuxt.error({
+                        status: error.response.status,
+                        message: 'サーバーでエラーが発生しました'
+                    });
+                } else if (error.request) {
+                    this.$nuxt.error({
+                        message: 'サーバーからレスポンスがありません'
+                    });
+                } else {
+                    this.$nuxt.error({
+                        message: error.message
+                    });
+                }
+                return;
+            }
             this.bookMarkIDs = res.data.map(item => item.id);
             this.items.forEach((item) => {
                 this.$set(item, 'isBookMark', this.bookMarkIDs.includes(item.id));

@@ -10,4 +10,5 @@ urlpatterns = [
     path('bookmark/<int:pk>/', views.BookMarkDetail.as_view()),
 ]
 
+# 拡張子(html, jsonなど)を指定して処理を切り替えできるようにする
 urlpatterns = format_suffix_patterns(urlpatterns)
